@@ -1,5 +1,7 @@
 package com.jetpack.ui.search
 
+import android.util.Log
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -8,6 +10,7 @@ import com.jetpack.data.SearchRepository
 import com.jetpack.data.dto.Breweries
 import com.jetpack.ui.common.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -16,7 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchViewModel @Inject constructor(private val repository: SearchRepository): BaseViewModel(),SearchQueryEvents {
 
-    private val searchEvent: Channel<String> = Channel(Channel.UNLIMITED)
+    val searchEvent:MutableSharedFlow<String> = MutableSharedFlow()
+
     init {
         viewModelScope.launch {
             performSearch()
@@ -26,32 +30,30 @@ class SearchViewModel @Inject constructor(private val repository: SearchReposito
     private val _searchViewState:MutableLiveData<Resource<List<Breweries>>> = MutableLiveData()
     val searchViewState:LiveData<Resource<List<Breweries>>> = _searchViewState
 
-    private suspend fun performSearch(){
-        searchEvent.consumeAsFlow()
-            .debounce(200)
-            .filter { it.isNotEmpty() and it.isNotBlank() }
-            .distinctUntilChanged()
+    suspend fun performSearch(){
+             processSearchText()
             .flatMapLatest {
-                repository.searchBreweries(searchQuery = it)
-                    .onStart { emit(Resource.Loading()) }
-            }
+                repository.searchBreweries(searchQuery = it) }
             .collect {
                 _searchViewState.value = it
             }
     }
 
+    fun processSearchText(): Flow<String> {
+        return searchEvent
+            .asSharedFlow()
+            .debounce(200)
+            .filter { it.isNotEmpty() and it.isNotBlank() }
+            .distinctUntilChanged()
+    }
+
     override fun searchQueryEvent(query: String) {
         viewModelScope.launch {
-            searchEvent.offer(query)
+            searchEvent.emit(query)
         }
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        searchEvent.close()
-    }
 }
-
 
 
 interface SearchQueryEvents{
