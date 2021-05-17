@@ -17,47 +17,62 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SearchViewModel @Inject constructor(private val repository: SearchRepository): BaseViewModel(),SearchQueryEvents {
+class SearchViewModel @Inject constructor(private val repository: SearchRepository) :
+    BaseViewModel(), SearchQueryEvents {
 
-    val searchEvent:MutableSharedFlow<String> = MutableSharedFlow()
+    private val _searchEvent: MutableSharedFlow<String> = MutableSharedFlow()
+    val searchEvent: SharedFlow<String>
+        get() = _searchEvent
+
+    private val _viewState = MutableStateFlow<Resource<List<Breweries>>>(Resource.Loading)
+    val viewState: StateFlow<Resource<List<Breweries>>>
+        get() = _viewState
 
     init {
         viewModelScope.launch {
-            performSearch()
+            processSearchText()
         }
     }
 
-    private val _searchViewState:MutableLiveData<Resource<List<Breweries>>> = MutableLiveData()
-    val searchViewState:LiveData<Resource<List<Breweries>>> = _searchViewState
 
-    suspend fun performSearch(){
-             processSearchText()
-            .flatMapLatest {
-                repository.searchBreweries(searchQuery = it) }
+//    suspend fun performSearch() {
+//        processSearchText()
+//            .flatMapLatest {
+//                repository.searchBreweries(searchQuery = it)
+//            }
+//            .onStart { emit(Resource.Loading()) }
+//            .collect {
+//                _searchViewState.value = it
+//            }
+//    }
+
+    private suspend fun processSearchText() {
+        searchEvent
+//            .filter { it.isNotEmpty() and it.isNotBlank() }
+            .distinctUntilChanged()
+            .debounce(200)
+            .mapLatest {
+                repository.searchBreweries(searchQuery = it)
+            }
+            .onStart { emit(Resource.Loading) }
             .collect {
-                _searchViewState.value = it
+                _viewState.value = it
             }
     }
 
-    fun processSearchText(): Flow<String> {
-        return searchEvent
-            .asSharedFlow()
-            .debounce(200)
-            .filter { it.isNotEmpty() and it.isNotBlank() }
-            .distinctUntilChanged()
-    }
-
-    override fun searchQueryEvent(query: String) {
+    // A | AB | ABC
+    //  200 A | 200 AB
+    override fun onViewEvent(query: String) {
         viewModelScope.launch {
-            searchEvent.emit(query)
+            _searchEvent.emit(query)
         }
     }
 
 }
 
 
-interface SearchQueryEvents{
-    fun searchQueryEvent(query:String)
+interface SearchQueryEvents {
+    fun onViewEvent(query: String)
 }
 
 sealed class SearchViewState {

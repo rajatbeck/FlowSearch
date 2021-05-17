@@ -40,6 +40,15 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    configurations.all {
+        resolutionStrategy {
+            exclude group: "org.jetbrains.kotlinx", module: "kotlinx-coroutines-debug"
+
+        }
+    }
+    defaultConfig {
+        testInstrumentationRunnerArguments clearPackageData: 'true'
+    }
 
 
 }
@@ -57,21 +66,31 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
 
+    // Coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3'
 
+    // DI - HILT
     implementation "com.google.dagger:hilt-android:$hilt_version"
     implementation "androidx.hilt:hilt-lifecycle-viewmodel:$hilt_viewmodels"
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
 
+    //Networking & moshi
     implementation "com.squareup.retrofit2:converter-moshi:$retrofitVersion"
     implementation "com.squareup.moshi:moshi:$moshiVersion"
     kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion"
     implementation "com.squareup.okhttp3:logging-interceptor:$okhttpInterceptorVersion"
 
-
+    //Unit Testing
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesTestVersion"
+    implementation "androidx.arch.core:core-testing:$coreTestingVersion"
+    testImplementation "app.cash.turbine:turbine:$turbineVersion"
+    testImplementation "io.mockk:mockk:$mockkVersion"
+    testImplementation "org.amshove.kluent:kluent-android:$kluentVersion"
+    testImplementation "org.amshove.kluent:kluent:$kluentVersion"
     testImplementation 'junit:junit:4.+'
+
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 }

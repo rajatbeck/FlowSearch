@@ -1,15 +1,11 @@
 package com.jetpack.ui.search
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.jetpack.R
 import com.jetpack.data.Resource
 import com.jetpack.data.dto.Breweries
 import com.jetpack.databinding.FragmentSearchBinding
@@ -17,9 +13,9 @@ import com.jetpack.ui.common.BaseFragment
 import com.jetpack.ui.search.adapter.SearchAdapter
 import com.jetpack.utils.onTextChange
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -43,7 +39,13 @@ class SearchFragment : BaseFragment() {
     }
 
     override fun observe() {
-        viewModel.searchViewState.observe(viewLifecycleOwner) { handleBreweryList(it) }
+//        viewModel.searchViewState.observe(viewLifecycleOwner) { handleBreweryList(it) }
+        lifecycleScope.launch {
+            viewModel.viewState
+                .collect {
+                    handleBreweryList(it)
+                }
+        }
     }
 
     override fun init() {
@@ -52,7 +54,7 @@ class SearchFragment : BaseFragment() {
         }
         viewBinding.progressLoader.hide()
         viewBinding.searchView.onTextChange { newText ->
-            viewModel.searchQueryEvent(newText.orEmpty())
+            viewModel.onViewEvent(newText.orEmpty())
             false
         }
     }

@@ -24,7 +24,7 @@ class RemoteData @Inject constructor(
                 Resource.Success(data = (response as? List<Breweries>).orEmpty())
             }
             else -> {
-                Resource.DataError(errorCode = (response as? Int) ?: DEFAULT_ERROR)
+                Resource.DataError(RuntimeException())
             }
         }
     }

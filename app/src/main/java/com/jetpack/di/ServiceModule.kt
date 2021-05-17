@@ -9,6 +9,7 @@ import dagger.hilt.android.components.FragmentComponent
 import dagger.hilt.android.scopes.ActivityScoped
 import dagger.hilt.android.scopes.FragmentScoped
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.channels.Channel
 import retrofit2.Retrofit
 
 @Module
@@ -18,5 +19,10 @@ class ServiceModule {
     @Provides
     fun providesSearchApi(builder: Retrofit): BreweryService {
         return builder.create(BreweryService::class.java)
+    }
+
+    @Provides
+    fun providesChannel(): Channel<String> {
+        return Channel<String>()
     }
 }
