@@ -2,7 +2,7 @@ name: Manually workflow
 on:
   workflow_dispatch:
     inputs:
-      logLevel:
+      flavours:
         description: 'Log level'
         required: true
         default: 'warning'
