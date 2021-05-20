@@ -1,5 +1,7 @@
 name: Manually triggered workflow
 on:
+  branches: [main]
+
   workflow_dispatch:
     inputs:
       name:
