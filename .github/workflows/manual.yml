@@ -3,9 +3,9 @@ on:
   workflow_dispatch:
     inputs:
       flavours:
-        description: 'Log level'
+        description: 'flavours'
         required: true
-        default: 'warning'
+        default: 'debug'
       tags:
         description: 'Test scenario tags'
 jobs:
@@ -13,5 +13,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          echo "Log level: ${{ github.event.inputs.logLevel }}"
+          echo "Log level: ${{ github.event.inputs.flavours }}"
           echo "Tags: ${{ github.event.inputs.tags }}"
