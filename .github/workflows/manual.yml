@@ -9,12 +9,17 @@ on:
       tags:
         description: 'Test scenario tags'
 jobs:
-  printInputs:
-    runs-on: ubuntu-latest
+#  printInputs:
+#    runs-on: ubuntu-latest
 #    steps:
 #      - run: |
 #          echo "Log level: ${{ github.event.inputs.flavours }}"
 #          echo "Tags: ${{ github.event.inputs.tags }}"
+      apk:
+        name: Generate APK
+        runs-on: ubuntu-18.04
+
+        steps:
       steps:
         - uses: actions/checkout@v1
         - name: set up JDK 1.8
