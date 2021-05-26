@@ -3,6 +3,7 @@
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="1.7">
       <module name="FlowSearch.app" target="11" />
+      <module name="FlowSearch.domain" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>
