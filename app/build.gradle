@@ -74,6 +74,8 @@ dependencies {
     implementation "com.google.dagger:hilt-android:$hilt_version"
     implementation "androidx.hilt:hilt-lifecycle-viewmodel:$hilt_viewmodels"
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation project(path: ':data')
+    implementation project(path: ':domain')
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
 
     //Networking & moshi

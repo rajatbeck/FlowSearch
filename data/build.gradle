@@ -36,9 +36,20 @@ android {
 }
 
 dependencies {
+    implementation project(path: ':domain')
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'androidx.core:core-ktx:1.5.0'
+
+    //Networking & moshi
+    implementation "com.squareup.retrofit2:converter-moshi:$retrofitVersion"
+    implementation "com.squareup.moshi:moshi:$moshiVersion"
+    kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttpInterceptorVersion"
+
     testImplementation 'junit:junit:4.+'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
     // DI - HILT
     implementation "com.google.dagger:hilt-android:$hilt_version"

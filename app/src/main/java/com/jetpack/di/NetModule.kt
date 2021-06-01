@@ -1,9 +1,7 @@
 package com.jetpack.di
 
 import com.jetpack.BuildConfig
-import com.jetpack.data.remote.moshi_factories.MyKotlinJsonAdapter
-import com.jetpack.data.remote.moshi_factories.MyKotlinJsonAdapterFactory
-import com.jetpack.data.remote.moshi_factories.MyStandardJsonAdapters
+import com.rajat.data.remote.BreweryService
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
@@ -35,22 +33,24 @@ class NetModule {
                 )
                 .build()
         }else{
-            OkHttpClient.Builder().build()
+            OkHttpClient.Builder()
+                .build()
         }
     }
 
     @Singleton
     @Provides
-    fun providesMoshi() = Moshi.Builder()
-        .add(MyKotlinJsonAdapterFactory())
-        .add(MyStandardJsonAdapters.FACTORY)
-        .build()
+    fun providesMoshi() = Moshi.Builder().build()
 
     @Singleton
     @Provides
     fun providesRetrofitInstance(okHttpClient: OkHttpClient,moshi: Moshi):Retrofit = Retrofit.Builder()
         .client(okHttpClient)
-        .addConverterFactory(MoshiConverterFactory.create(moshi))
+        .addConverterFactory(MoshiConverterFactory.create())
         .baseUrl(BASE_URL)
         .build()
+
+
+    @Provides
+    fun providesAPI(retrofit: Retrofit) = retrofit.create(BreweryService::class.java)
 }

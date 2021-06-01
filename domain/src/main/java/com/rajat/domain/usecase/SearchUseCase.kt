@@ -1,18 +1,15 @@
 package com.rajat.domain.usecase
 
 import com.rajat.domain.model.Breweries
+import com.rajat.domain.model.ResultWrapper
 import com.rajat.domain.repository.SearchRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class SearchUseCase constructor(
-    private val dispatcher: Dispatchers,
+class SearchUseCase @Inject constructor(
     private val repository: SearchRepository
 ) {
 
-    suspend fun performSearch(query: String): List<Breweries> {
-        return withContext(dispatcher.IO) {
-            repository.getBreweries(query)
-        }
+    suspend fun performSearch(query: String): ResultWrapper<List<Breweries>> {
+        return repository.getBreweries(query)
     }
 }

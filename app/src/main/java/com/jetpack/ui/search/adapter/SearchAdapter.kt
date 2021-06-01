@@ -4,9 +4,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import com.jetpack.data.dto.Breweries
 import com.jetpack.databinding.LayoutRowBreweryItemBinding
 import com.jetpack.ui.common.BaseViewHolder
+import com.rajat.domain.model.Breweries
 
 class SearchAdapter : ListAdapter<Breweries, SearchAdapter.SearchViewHolder>(DIFF_UTIL) {
 
